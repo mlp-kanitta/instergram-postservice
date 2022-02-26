@@ -114,7 +114,7 @@ public class PostController {
 
         log.info("Received an updating request for userId : {}", userId);
 
-        Post updated = postService.updatePost(postId, caption, userId);
+        postService.updatePost(postId, caption, userId);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentContextPath().path("/posts/{id}")
