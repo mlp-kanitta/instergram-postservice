@@ -51,7 +51,7 @@ public class PostController {
     /*
         POST /posts - Create new post
      */
-    @RequestMapping(path = "/v1/posts", method = RequestMethod.POST, consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+    @PostMapping(path = "/v1/posts", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
     public ResponseEntity<CommonResponse> createPost(@RequestHeader("userid") String userId,
                                          @RequestPart  @NonNull MultipartFile imageFile,
                                        @RequestParam @Size(max = 250) String caption) throws BusinessException, IOException {
@@ -93,7 +93,7 @@ public class PostController {
         GET /posts - List user posts
      */
     @GetMapping("/v1/posts")
-    public ResponseEntity<CommonResponse> findUserPosts(@RequestHeader("userid") String userId) {
+    public ResponseEntity<CommonResponse<?>> findUserPosts(@RequestHeader("userid") String userId) {
         log.info("Received request to list a post for user {}", userId);
 
         List<Post> posts = postService.getPostsByUserId(userId);
