@@ -22,15 +22,6 @@ public class PostService {
     @Autowired
     private PostRepository postRepository;
 
-    @Autowired
-    private CassandraTemplate cassandraTemplate;
-
-    public String getReleaseVersion() {
-        return cassandraTemplate
-                .getCqlOperations()
-                .queryForObject("select release_version from system.local", String.class);
-    }
-
     public Post createPost(PostRequest postRequest, String userId) throws IOException {
         Post post = new Post();
         post.setCaption(postRequest.getCaption());

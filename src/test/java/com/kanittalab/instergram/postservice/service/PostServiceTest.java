@@ -16,9 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.Base64;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -57,6 +55,7 @@ class PostServiceTest {
 
     }
 
+    @Test
     void createPost_exception() throws Exception {
         String caption = "new caption";
 
@@ -114,6 +113,70 @@ class PostServiceTest {
 
         BusinessException exception = assertThrows(BusinessException.class, () -> {
             postService.updatePost(postId.toString(),caption);
+        });
+
+        assertEquals(CommonConstants.STATUS.STATUS_CODE_RECORD_NOT_FOUND,exception.getCode());
+
+    }
+
+    @Test
+    void getPostsByUserId_success() throws Exception {
+        String userId = "userTest";
+
+        MockMultipartFile imageFile
+                = new MockMultipartFile(
+                "imageFile",
+                "test.jpeg",
+                MediaType.IMAGE_JPEG_VALUE,
+                "test".getBytes()
+        );
+
+        List<Post> posts = new ArrayList<Post>();
+        Post post1 = new Post();
+        post1.setCaption("\"test caption\"");
+        post1.setUserId("userTest");
+        post1.setUid(UUID.randomUUID());
+        posts.add(post1);
+
+        when( postRepository.findPostByUserId(userId)).thenReturn(posts);
+
+        assertDoesNotThrow(() -> postService.getPostsByUserId(userId));
+
+    }
+
+    @Test
+    void deletePostById_success() throws Exception {
+        String userId = "userTest";
+        UUID postId = UUID.randomUUID();
+
+
+        MockMultipartFile imageFile
+                = new MockMultipartFile(
+                "imageFile",
+                "test.jpeg",
+                MediaType.IMAGE_JPEG_VALUE,
+                "test".getBytes()
+        );
+
+        Post expected = new Post();
+        expected.setCaption("caption");
+        expected.setImage(Base64.getEncoder().encodeToString(imageFile.getBytes()));
+
+        when(postRepository.findById(postId)).thenReturn(Optional.of(expected));
+
+        assertDoesNotThrow(() -> postService.deletePost(postId.toString(),userId));
+
+    }
+
+    @Test
+    void deletePostById_postNotFound() throws Exception {
+        String userId = "userTest";
+        UUID postId = UUID.randomUUID();
+
+        when(postRepository.findById(postId)).thenReturn(Optional.empty());
+
+        BusinessException exception = assertThrows(BusinessException.class, () -> {
+            postService.deletePost(postId.toString(),userId);
         });
 
         assertEquals(CommonConstants.STATUS.STATUS_CODE_RECORD_NOT_FOUND,exception.getCode());
