@@ -28,6 +28,7 @@ public class PostService {
         post.setContentType(postRequest.getImageFile().getContentType());
         post.setImage(Base64.getEncoder().encodeToString(postRequest.getImageFile().getBytes()));
         post.setUserId(userId);
+        post.setCreatedDate(Instant.now());
 
         return postRepository.insert(post);
     }
