@@ -1,6 +1,7 @@
 package com.kanittalab.instergram.postservice.service;
 
 import com.kanittalab.instergram.postservice.constant.CommonConstants;
+import com.kanittalab.instergram.postservice.exception.BusinessException;
 import com.kanittalab.instergram.postservice.model.Post;
 import com.kanittalab.instergram.postservice.model.request.PostRequest;
 import com.kanittalab.instergram.postservice.repository.PostRepository;
@@ -16,6 +17,8 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Base64;
+import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -56,7 +59,7 @@ class PostServiceTest {
 
     void createPost_exception() throws Exception {
         String caption = "new caption";
-        
+
         PostRequest postRequest = new PostRequest("caption",null);
         when(postRepository.insert(any(Post.class))).thenThrow(new RuntimeException());
 
@@ -66,5 +69,55 @@ class PostServiceTest {
 
     }
 
+    @Test
+    void updatePost_success() throws Exception {
+        String caption = "updated caption";
+        UUID postId = UUID.randomUUID();
+
+        MockMultipartFile imageFile
+                = new MockMultipartFile(
+                "imageFile",
+                "test.jpeg",
+                MediaType.IMAGE_JPEG_VALUE,
+                "test".getBytes()
+        );
+
+        Post expected = new Post();
+        expected.setCaption(caption);
+        expected.setImage(Base64.getEncoder().encodeToString(imageFile.getBytes()));
+
+        when(postRepository.findById(postId)).thenReturn(Optional.of(expected));
+        when(postRepository.save(any(Post.class))).thenReturn(expected);
+
+        assertDoesNotThrow(() -> postService.updatePost(postId.toString(),caption));
+
+    }
+
+    @Test
+    void updatePost_postNotFound() throws Exception {
+        String caption = "updated caption";
+        UUID postId = UUID.randomUUID();
+
+        MockMultipartFile imageFile
+                = new MockMultipartFile(
+                "imageFile",
+                "test.jpeg",
+                MediaType.IMAGE_JPEG_VALUE,
+                "test".getBytes()
+        );
+
+        Post expected = new Post();
+        expected.setCaption(caption);
+        expected.setImage(Base64.getEncoder().encodeToString(imageFile.getBytes()));
+
+        when(postRepository.findById(postId)).thenReturn(Optional.empty());
+
+        BusinessException exception = assertThrows(BusinessException.class, () -> {
+            postService.updatePost(postId.toString(),caption);
+        });
+
+        assertEquals(CommonConstants.STATUS.STATUS_CODE_RECORD_NOT_FOUND,exception.getCode());
+
+    }
 
 }
