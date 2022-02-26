@@ -2,6 +2,7 @@ package com.kanittalab.instergram.postservice.exception;
 
 import com.kanittalab.instergram.postservice.constant.CommonConstants;
 import com.kanittalab.instergram.postservice.model.ResponseError;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,19 +25,33 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @ControllerAdvice
 public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<Object>  handleValidationExceptions(
-            Exception ex) {
 
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Object>  handleValidationExceptions(Exception ex) {
+
+        log.error("handleValidationExceptions",ex);
         List<String> details = new ArrayList<String>();
         details.add(ex.getMessage());
 
         ResponseError err = new ResponseError(LocalDateTime.now(), "General error" , details);
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new CommonResponse(CommonConstants.STATUS_CODE.STATUS_CODE_GENERAL_ERROR,"General error",err));
+    }
+
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<Object>  handleBusinessException(
+            BusinessException ex) {
+
+        List<String> details = new ArrayList<String>();
+        details.add(ex.getMessage());
+
+        ResponseError err = new ResponseError(LocalDateTime.now(), "Business error" , details);
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new CommonResponse(ex.getCode(),ex.getMessage()));
     }
 
     @ExceptionHandler(FileNotFoundException.class)
