@@ -20,6 +20,10 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -35,7 +39,7 @@ class PostControllerTest {
     @Autowired
     private MockMvc mvc;
 
-    @MockBean
+    @Autowired
     private PostService postService;
 
     @Autowired
@@ -93,7 +97,7 @@ class PostControllerTest {
     }
 
     @Test
-    void post_success_200() throws Exception {
+    void post_success_201() throws Exception {
         String caption = "test caption";
 
         MockMultipartFile imageFile
@@ -112,6 +116,59 @@ class PostControllerTest {
                 .header("userid", "userTest"))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("code").value(CommonConstants.STATUS_CODE.STATUS_CODE_SUCCESS));
+    }
+
+
+    @Test
+    void get_posts_success_200() throws Exception {
+
+        String userId = "userTest";
+
+        List<Post> posts = new ArrayList<Post>();
+        Post post1 = new Post();
+        post1.setCaption("\"test caption\"");
+        post1.setUserId("userTest");
+        post1.setUid(UUID.randomUUID());
+        posts.add(post1);
+
+        when(postService.getPostsByUserId("userTest")).thenReturn(posts);
+
+        mvc.perform(get("/posts")
+                .header("userid", "userTest"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("code").value(CommonConstants.STATUS_CODE.STATUS_CODE_SUCCESS))
+                .andExpect(jsonPath("data").isNotEmpty());
+    }
+
+    @Test
+    void patch_posts_record_not_found() throws Exception {
+
+        String userId = "userTest";
+        String postId = "a2ed972d-75b0-45af-8ea0-d1e387c7b15b";
+
+        //when(postService.getPostsByUserId("userTest")).thenReturn(posts);
+
+        mvc.perform(patch("/posts/"+postId)
+                .header("userid", "userTest")
+                .param("caption","updated caption"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("code").value(CommonConstants.STATUS_CODE.STATUS_CODE_RECORD_NOT_FOUND));
+    }
+
+    @Test
+    void patch_posts_success_200() throws Exception {
+
+        String userId = "userTest";
+        String postId = "a2ed972d-75b0-45af-8ea0-d1e387c7b14b";
+
+        //when(postService.getPostsByUserId("userTest")).thenReturn(posts);
+
+        mvc.perform(patch("/posts/"+postId)
+                .header("userid", "userTest")
+        .param("caption","updated caption"))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("code").value(CommonConstants.STATUS_CODE.STATUS_CODE_SUCCESS))
+                .andExpect(jsonPath("data").isEmpty());
     }
 
 }

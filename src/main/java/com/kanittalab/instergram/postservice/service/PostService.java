@@ -14,6 +14,7 @@ import java.time.Instant;
 import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service("postService")
 public class PostService {
@@ -62,8 +63,8 @@ public class PostService {
 
 
     public Post getPostById(String id) {
-        Optional<Post> postOptional = postRepository.findById(id);
-        if(postOptional!=null) {
+        Optional<Post> postOptional = postRepository.findById(UUID.fromString(id));
+        if(postOptional!=null && postOptional.isPresent()) {
             return postOptional.get();
         }
         return null;

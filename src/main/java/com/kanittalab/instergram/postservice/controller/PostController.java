@@ -100,7 +100,7 @@ public class PostController {
 
         log.info("Found {} posts for user {}",posts !=null ?  posts.size() : 0, userId);
 
-        return ResponseEntity.ok(new CommonResponse(CommonConstants.STATUS_CODE.STATUS_CODE_SUCCESS, "Post created successfully",new PostListResponse(posts)));
+        return ResponseEntity.ok(new CommonResponse(CommonConstants.STATUS_CODE.STATUS_CODE_SUCCESS, "Post listed",new PostListResponse(posts)));
     }
 
 
@@ -114,7 +114,7 @@ public class PostController {
 
         log.info("Received an updating request for userId : {}", userId);
 
-        postService.updatePost(postId, caption, userId);
+        Post updated = postService.updatePost(postId, caption, userId);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentContextPath().path("/posts/{id}")
