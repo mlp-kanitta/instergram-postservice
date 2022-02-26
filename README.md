@@ -12,42 +12,44 @@ With the objective of learning how to use Cassandra database with Astra Datastax
 The release divides into each difference MVP as below : 
 
 ### **MVP1**
-User can create a photo feed and view the feed(s) they have uploaded.
-๊๊User can delete their own post.
-User can update the caption.
-User can view feeds containing posts from the users they follow.
+- User can create a photo feed and view the feed(s) they have uploaded.
+๊๊- User can delete their own post.
+- User can update the caption.
+- User can view feeds containing posts from the users they follow.
 ๊
 
 ### **MVP2**
-User can register a new account.
-User can login to his account.
-User should be able to follow other users.
-User should be able to like a photo of user they are following.
+- User can register a new account.
+- User can login to his account.
+- User should be able to follow other users.
+- User should be able to like a photo of user they are following.
 
 ### **MVP3** 
-User can view suggested post based on a post that they liked.
+- User can view suggested post based on a post that they liked.
 
 ## **High-Level Design Architecture**
 
+![alt text](https://github.com/mlp-kanitta/instergram-postservice/blob/main/.design/instergram-architect.jpg?raw=true)
 
-API Design
+
+## **API Design**
 
 The endpoint of Post Service should be exposed as below :
 
-POST   /posts      - Create new post
-GET    /posts      - List user posts
-DELETE /posts/{id} - Delete post by ID
-PATCH  /posts/{id} - Update post by ID
+- POST   /posts      - Create new post
+- GET    /posts      - List user posts
+- DELETE /posts/{id} - Delete post by ID
+- PATCH  /posts/{id} - Update post by ID
 
-Prerequisite
-JAVA SDK 11
-Internet connection should be available to Cassandra database by Astra Datastax
+## **Prerequisite**
+- JAVA SDK 11
+- Internet connection should be available to Cassandra database by Astra Datastax
 
-How to run a project
+## **How to run a project**
 
-mvn spring-boot:run
+*mvn spring-boot:run*
 
-Swagger 
+## **Swagger **
 After start application success fully, an api should be ready to test at
 http://localhost:8081/swagger-ui/#/post-controller/
 
