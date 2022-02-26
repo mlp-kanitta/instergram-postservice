@@ -45,9 +45,9 @@ The endpoint of Post Service should be exposed as below :
 - JAVA SDK 11
 - Internet connection should be available to Cassandra database by Astra Datastax
 
-## **How to run a project**
-
-*mvn spring-boot:run*
+### How to run a project
+1. To check readiness for the first time execute : `mvn clean package`
+2. To run the application : `mvn spring-boot:run`
 
 ## **Swagger **
 After start application success fully, an api should be ready to test at
