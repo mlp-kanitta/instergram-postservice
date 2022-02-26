@@ -1,7 +1,11 @@
 package com.kanittalab.instergram.postservice.constant;
 
 public class CommonConstants {
-    public class STATUS_CODE {
+    public class STATUS {
+
+        private STATUS(){
+            throw new IllegalStateException("STATUS class");
+        }
         public static final String STATUS_CODE_SUCCESS = "1000";
         public static final String STATUS_CODE_RECORD_NOT_FOUND = "4000";
         public static final String STATUS_CODE_GENERAL_ERROR = "9000";

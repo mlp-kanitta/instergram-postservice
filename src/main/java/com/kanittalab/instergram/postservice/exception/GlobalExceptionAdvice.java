@@ -1,20 +1,18 @@
 package com.kanittalab.instergram.postservice.exception;
 
 import com.kanittalab.instergram.postservice.constant.CommonConstants;
+import com.kanittalab.instergram.postservice.model.CommonResponse;
 import com.kanittalab.instergram.postservice.model.ResponseError;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-import com.kanittalab.instergram.postservice.model.CommonResponse;
 
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
@@ -31,27 +29,27 @@ public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
 
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<Object>  handleValidationExceptions(Exception ex) {
+    public ResponseEntity<Object> handleValidationExceptions(Exception ex) {
 
-        log.error("handleValidationExceptions",ex);
+        log.error("handleValidationExceptions", ex);
         List<String> details = new ArrayList<String>();
         details.add(ex.getMessage());
 
-        ResponseError err = new ResponseError(LocalDateTime.now(), "General error" , details);
+        ResponseError err = new ResponseError(LocalDateTime.now(), "General error", details);
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new CommonResponse(CommonConstants.STATUS_CODE.STATUS_CODE_GENERAL_ERROR,"General error",err));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new CommonResponse(CommonConstants.STATUS.STATUS_CODE_GENERAL_ERROR, "General error", err));
     }
 
     @ExceptionHandler(BusinessException.class)
-    public ResponseEntity<Object>  handleBusinessException(
+    public ResponseEntity<Object> handleBusinessException(
             BusinessException ex) {
 
         List<String> details = new ArrayList<String>();
         details.add(ex.getMessage());
 
-        ResponseError err = new ResponseError(LocalDateTime.now(), "Business error" , details);
+        ResponseError err = new ResponseError(LocalDateTime.now(), "Business error", details);
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new CommonResponse(ex.getCode(),ex.getMessage()));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new CommonResponse(ex.getCode(), ex.getMessage()));
     }
 
     @ExceptionHandler(FileNotFoundException.class)
@@ -59,8 +57,8 @@ public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
 
         List<String> details = new ArrayList<String>();
         details.add(exc.getMessage());
-        ResponseError err = new ResponseError(LocalDateTime.now(), "File Not Found" ,details);
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new CommonResponse(CommonConstants.STATUS_CODE.STATUS_CODE_FILE_EXCEED,err.getMessage(),err));
+        ResponseError err = new ResponseError(LocalDateTime.now(), "File Not Found", details);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new CommonResponse(CommonConstants.STATUS.STATUS_CODE_FILE_EXCEED, err.getMessage(), err));
     }
 
     @ExceptionHandler(MaxUploadSizeExceededException.class)
@@ -68,8 +66,8 @@ public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
 
         List<String> details = new ArrayList<String>();
         details.add(exc.getMessage());
-        ResponseError err = new ResponseError(LocalDateTime.now(), "File Size Exceeded" ,details);
-        return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new CommonResponse(CommonConstants.STATUS_CODE.STATUS_CODE_FILE_EXCEED,err.getMessage(),err));
+        ResponseError err = new ResponseError(LocalDateTime.now(), "File Size Exceeded", details);
+        return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new CommonResponse(CommonConstants.STATUS.STATUS_CODE_FILE_EXCEED, err.getMessage(), err));
     }
 
 
@@ -77,9 +75,9 @@ public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         Map<String, String> errors = new HashMap<>();
 
-        ResponseError err = new ResponseError(LocalDateTime.now(), "validationException" ,ex.getBindingResult().getAllErrors());
+        ResponseError err = new ResponseError(LocalDateTime.now(), "validationException", ex.getBindingResult().getAllErrors());
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new CommonResponse(CommonConstants.STATUS_CODE.STATUS_CODE_VALIDATION_ERROR,"Validation error",err));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new CommonResponse(CommonConstants.STATUS.STATUS_CODE_VALIDATION_ERROR, "Validation error", err));
     }
 
     @ExceptionHandler({ConstraintViolationException.class, ValidationException.class})
@@ -87,7 +85,7 @@ public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
 
         List<String> details = new ArrayList<String>();
         details.add(exc.getMessage());
-        ResponseError err = new ResponseError(LocalDateTime.now(), "Validation Exception" ,details);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new CommonResponse(CommonConstants.STATUS_CODE.STATUS_CODE_VALIDATION_ERROR,err.getMessage(),err));
+        ResponseError err = new ResponseError(LocalDateTime.now(), "Validation Exception", details);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new CommonResponse(CommonConstants.STATUS.STATUS_CODE_VALIDATION_ERROR, err.getMessage(), err));
     }
 }

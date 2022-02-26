@@ -21,7 +21,7 @@ public class HttpHeaderAutoConfiguration {
         return httpHeadersSetup();
     }
 
-    public static HttpHeaders httpHeadersSetup(){
+    public static HttpHeaders httpHeadersSetup() {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
         HttpServletRequest curRequest = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
@@ -31,7 +31,7 @@ public class HttpHeaderAutoConfiguration {
                 String header = headerNames.nextElement();
                 String value = curRequest.getHeader(header);
                 log.info("Adding header {} with value {}", header, value);
-                    httpHeaders.add(header, value);
+                httpHeaders.add(header, value);
             }
         }
         return httpHeaders;

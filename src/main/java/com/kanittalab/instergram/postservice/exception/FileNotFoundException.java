@@ -8,5 +8,5 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class FileNotFoundException extends RuntimeException {
-    private String message;
+    private final String message;
 }

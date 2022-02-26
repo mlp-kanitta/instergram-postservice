@@ -10,7 +10,6 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-
 import java.util.function.Predicate;
 
 
@@ -18,7 +17,7 @@ import java.util.function.Predicate;
 @EnableSwagger2
 public class SwaggerConfig {
     @Bean
-    public Docket produceApi(){
+    public Docket produceApi() {
         return new Docket(DocumentationType.SWAGGER_2).apiInfo(apiInfo()).select()
                 .apis(RequestHandlerSelectors.basePackage("com.kanittalab.instergram.postservice.controller"))
                 .paths(PathSelectors.any())
@@ -26,7 +25,7 @@ public class SwaggerConfig {
                 .build();
     }
 
-    private ApiInfo apiInfo(){
+    private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
                 .title("Instergram API")
                 .description("Instergram's PostService API ")

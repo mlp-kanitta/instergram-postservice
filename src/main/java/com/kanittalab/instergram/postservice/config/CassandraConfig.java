@@ -6,7 +6,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.cassandra.core.CassandraTemplate;
-import org.springframework.data.cassandra.repository.config.EnableCassandraRepositories;
 
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -27,16 +26,15 @@ public class CassandraConfig {
 
     @Bean
     public CqlSession cqlSession() throws IOException {
-        final CqlSession cqlSession = CqlSession.builder()
+        return CqlSession.builder()
                 .withCloudSecureConnectBundle(Paths.get(new ClassPathResource(secureConnectBundlePath).getURI()))
                 .withAuthCredentials(username, password)
                 .withKeyspace(keyspaceName)
                 .build();
-        return cqlSession;
     }
 
     @Bean
-    public CassandraTemplate cassandraTemplate() throws IOException{
+    public CassandraTemplate cassandraTemplate() throws IOException {
         return new CassandraTemplate(cqlSession());
     }
 }

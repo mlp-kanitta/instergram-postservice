@@ -4,20 +4,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kanittalab.instergram.postservice.constant.CommonConstants;
 import com.kanittalab.instergram.postservice.exception.BusinessException;
 import com.kanittalab.instergram.postservice.model.Post;
-import com.kanittalab.instergram.postservice.model.request.PostRequest;
 import com.kanittalab.instergram.postservice.service.PostService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -25,11 +21,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Slf4j
 @SpringBootTest
@@ -60,10 +55,10 @@ class PostControllerTest {
 
         mvc.perform(multipart("/v1/posts")
                 .file(imageFile)
-                .param("caption",caption)
+                .param("caption", caption)
                 .header("userid", "userTest"))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("code").value(CommonConstants.STATUS_CODE.STATUS_CODE_VALIDATION_ERROR));
+                .andExpect(jsonPath("code").value(CommonConstants.STATUS.STATUS_CODE_VALIDATION_ERROR));
     }
 
     @Test
@@ -72,7 +67,7 @@ class PostControllerTest {
 
 
         mvc.perform(multipart("/v1/posts")
-                .param("caption",caption)
+                .param("caption", caption)
                 .header("userid", "userTest"))
                 .andExpect(status().isBadRequest());
     }
@@ -91,10 +86,10 @@ class PostControllerTest {
 
         mvc.perform(multipart("/v1/posts")
                 .file(imageFile)
-                .param("caption",caption)
+                .param("caption", caption)
                 .header("userid", "userTest"))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("code").value(CommonConstants.STATUS_CODE.STATUS_CODE_INVALID_FILE_TYPE));
+                .andExpect(jsonPath("code").value(CommonConstants.STATUS.STATUS_CODE_INVALID_FILE_TYPE));
     }
 
     @Test
@@ -109,14 +104,14 @@ class PostControllerTest {
                 "test".getBytes()
         );
 
-        when(postService.createPost(any(),anyString())).thenReturn(new Post());
+        when(postService.createPost(any(), anyString())).thenReturn(new Post());
 
         mvc.perform(multipart("/v1/posts")
                 .file(imageFile)
-                .param("caption",caption)
+                .param("caption", caption)
                 .header("userid", "userTest"))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("code").value(CommonConstants.STATUS_CODE.STATUS_CODE_SUCCESS));
+                .andExpect(jsonPath("code").value(CommonConstants.STATUS.STATUS_CODE_SUCCESS));
     }
 
 
@@ -137,7 +132,7 @@ class PostControllerTest {
         mvc.perform(get("/v1/posts")
                 .header("userid", "userTest"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("code").value(CommonConstants.STATUS_CODE.STATUS_CODE_SUCCESS))
+                .andExpect(jsonPath("code").value(CommonConstants.STATUS.STATUS_CODE_SUCCESS))
                 .andExpect(jsonPath("data").isNotEmpty());
     }
 
@@ -147,13 +142,13 @@ class PostControllerTest {
         String userId = "userTest";
         String postId = "a2ed972d-75b0-45af-8ea0-d1e387c7b15b";
 
-        when(postService.updatePost(anyString(),anyString(),anyString())).thenThrow(new BusinessException(CommonConstants.STATUS_CODE.STATUS_CODE_RECORD_NOT_FOUND,"Post not found"));
+        when(postService.updatePost(anyString(), anyString())).thenThrow(new BusinessException(CommonConstants.STATUS.STATUS_CODE_RECORD_NOT_FOUND, "Post not found"));
 
-        mvc.perform(patch("/v1/posts/"+postId)
+        mvc.perform(patch("/v1/posts/" + postId)
                 .header("userid", "userTest")
-                .param("caption","updated caption"))
+                .param("caption", "updated caption"))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("code").value(CommonConstants.STATUS_CODE.STATUS_CODE_RECORD_NOT_FOUND));
+                .andExpect(jsonPath("code").value(CommonConstants.STATUS.STATUS_CODE_RECORD_NOT_FOUND));
     }
 
     @Test
@@ -169,11 +164,11 @@ class PostControllerTest {
 
         when(postService.getPostById(postId)).thenReturn(post1);
 
-        mvc.perform(patch("/v1/posts/"+postId)
+        mvc.perform(patch("/v1/posts/" + postId)
                 .header("userid", "userTest")
-        .param("caption","updated caption"))
+                .param("caption", "updated caption"))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("code").value(CommonConstants.STATUS_CODE.STATUS_CODE_SUCCESS))
+                .andExpect(jsonPath("code").value(CommonConstants.STATUS.STATUS_CODE_SUCCESS))
                 .andExpect(jsonPath("data").isEmpty());
     }
 
@@ -185,10 +180,10 @@ class PostControllerTest {
 
         when(postService.getPostById(postId)).thenReturn(null);
 
-        mvc.perform(delete("/v1/posts/"+postId)
+        mvc.perform(delete("/v1/posts/" + postId)
                 .header("userid", "userTest"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("code").value(CommonConstants.STATUS_CODE.STATUS_CODE_SUCCESS))
+                .andExpect(jsonPath("code").value(CommonConstants.STATUS.STATUS_CODE_SUCCESS))
                 .andExpect(jsonPath("data").isEmpty());
     }
 
@@ -205,10 +200,10 @@ class PostControllerTest {
 
         when(postService.getPostById(postId)).thenReturn(post1);
 
-        mvc.perform(delete("/v1/posts/"+postId)
+        mvc.perform(delete("/v1/posts/" + postId)
                 .header("userid", "userTest"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("code").value(CommonConstants.STATUS_CODE.STATUS_CODE_SUCCESS))
+                .andExpect(jsonPath("code").value(CommonConstants.STATUS.STATUS_CODE_SUCCESS))
                 .andExpect(jsonPath("data").isEmpty());
     }
 

@@ -2,19 +2,16 @@ package com.kanittalab.instergram.postservice.controller;
 
 import com.kanittalab.instergram.postservice.constant.CommonConstants;
 import com.kanittalab.instergram.postservice.exception.BusinessException;
-import com.kanittalab.instergram.postservice.exception.FileNotFoundException;
 import com.kanittalab.instergram.postservice.model.CommonResponse;
 import com.kanittalab.instergram.postservice.model.Post;
 import com.kanittalab.instergram.postservice.model.request.PostRequest;
 import com.kanittalab.instergram.postservice.model.response.PostListResponse;
 import com.kanittalab.instergram.postservice.service.PostService;
 import com.kanittalab.instergram.postservice.utils.FileUtils;
-import jdk.jfr.ContentType;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.data.cassandra.core.query.CassandraPageRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -25,15 +22,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import javax.validation.Valid;
-import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.IOException;
 import java.net.URI;
-import java.sql.Timestamp;
-import java.time.ZonedDateTime;
-import java.util.Date;
 import java.util.List;
 
 @Slf4j
@@ -51,20 +43,20 @@ public class PostController {
     /*
         POST /posts - Create new post
      */
-    @PostMapping(path = "/v1/posts", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+    @PostMapping(path = "/v1/posts", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<CommonResponse> createPost(@RequestHeader("userid") String userId,
-                                         @RequestPart  @NonNull MultipartFile imageFile,
-                                       @RequestParam @Size(max = 250) String caption) throws BusinessException, IOException {
+                                                     @RequestPart @NonNull MultipartFile imageFile,
+                                                     @RequestParam @Size(max = 250) String caption) throws BusinessException, IOException {
 
         log.info("Received a posting request for userId : {}", userId);
 
-        if(!FileUtils.isImageFile(imageFile)){
-            throw  new BusinessException(CommonConstants.STATUS_CODE.STATUS_CODE_INVALID_FILE_TYPE,"Post image not found");
+        if (!FileUtils.isImageFile(imageFile)) {
+            throw new BusinessException(CommonConstants.STATUS.STATUS_CODE_INVALID_FILE_TYPE, "Post image not found");
         }
 
-        PostRequest postRequest = new PostRequest(caption,imageFile);
+        PostRequest postRequest = new PostRequest(caption, imageFile);
 
-        Post post = postService.createPost(postRequest,userId);
+        Post post = postService.createPost(postRequest, userId);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentContextPath().path("/posts/{id}")
@@ -72,7 +64,7 @@ public class PostController {
 
         return ResponseEntity
                 .created(location)
-                .body(new CommonResponse(CommonConstants.STATUS_CODE.STATUS_CODE_SUCCESS, "Post created successfully"));
+                .body(new CommonResponse(CommonConstants.STATUS.STATUS_CODE_SUCCESS, "Post created successfully"));
     }
 
     /*
@@ -85,7 +77,7 @@ public class PostController {
         log.info("Received request to delete a post id {} posted by userId {}", id, userId);
         postService.deletePost(id, userId);
         return ResponseEntity.ok()
-                .body(new CommonResponse(CommonConstants.STATUS_CODE.STATUS_CODE_SUCCESS, "Deleted post successfully"));
+                .body(new CommonResponse(CommonConstants.STATUS.STATUS_CODE_SUCCESS, "Deleted post successfully"));
     }
 
 
@@ -93,14 +85,14 @@ public class PostController {
         GET /posts - List user posts
      */
     @GetMapping("/v1/posts")
-    public ResponseEntity<CommonResponse<?>> findUserPosts(@RequestHeader("userid") String userId) {
+    public ResponseEntity<CommonResponse> findUserPosts(@RequestHeader("userid") String userId) {
         log.info("Received request to list a post for user {}", userId);
 
         List<Post> posts = postService.getPostsByUserId(userId);
 
-        log.info("Found {} posts for user {}",posts !=null ?  posts.size() : 0, userId);
+        log.info("Found {} posts for user {}", posts != null ? posts.size() : 0, userId);
 
-        return ResponseEntity.ok(new CommonResponse(CommonConstants.STATUS_CODE.STATUS_CODE_SUCCESS, "Post listed",new PostListResponse(posts)));
+        return ResponseEntity.ok(new CommonResponse(CommonConstants.STATUS.STATUS_CODE_SUCCESS, "Post listed", new PostListResponse(posts)));
     }
 
 
@@ -109,12 +101,12 @@ public class PostController {
      */
     @PatchMapping("/v1/posts/{id}")
     public ResponseEntity<CommonResponse> updatePost(@RequestHeader("userid") String userId,
-                                        @PathVariable("id") @NotNull String postId,
+                                                     @PathVariable("id") @NotNull String postId,
                                                      @RequestParam @Size(max = 250) String caption) throws IOException, BusinessException {
 
         log.info("Received an updating request for userId : {}", userId);
 
-        postService.updatePost(postId, caption, userId);
+        postService.updatePost(postId, caption);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentContextPath().path("/posts/{id}")
@@ -122,7 +114,7 @@ public class PostController {
 
         return ResponseEntity
                 .created(location)
-                .body(new CommonResponse(CommonConstants.STATUS_CODE.STATUS_CODE_SUCCESS, "Post updated successfully"));
+                .body(new CommonResponse(CommonConstants.STATUS.STATUS_CODE_SUCCESS, "Post updated successfully"));
     }
 
 }

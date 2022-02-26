@@ -7,13 +7,13 @@
     </appender>
 
 
-        <logger name="org.springframework.data.cassandra.cql.CqlTemplate" level="TRACE">
-            <appender-ref ref="STDOUT" />
-        </logger>
+    <logger name="org.springframework.data.cassandra.cql.CqlTemplate" level="TRACE">
+        <appender-ref ref="STDOUT"/>
+    </logger>
 
-        <root level="INFO">
-            <appender-ref ref="STDOUT" />
-        </root>
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+    </root>
 
 
 </configuration>

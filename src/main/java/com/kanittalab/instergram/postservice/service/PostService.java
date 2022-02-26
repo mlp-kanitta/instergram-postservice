@@ -31,11 +31,11 @@ public class PostService {
                 .queryForObject("select release_version from system.local", String.class);
     }
 
-    public Post createPost(PostRequest postRequest,String userId) throws IOException {
+    public Post createPost(PostRequest postRequest, String userId) throws IOException {
         Post post = new Post();
         post.setCaption(postRequest.getCaption());
         post.setContentType(postRequest.getImageFile().getContentType());
-        post.setImage( Base64.getEncoder().encodeToString(postRequest.getImageFile().getBytes()));
+        post.setImage(Base64.getEncoder().encodeToString(postRequest.getImageFile().getBytes()));
         post.setUserId(userId);
 
         return postRepository.insert(post);
@@ -44,21 +44,21 @@ public class PostService {
     public void deletePost(String id, String userId) throws BusinessException {
         Post post = this.getPostById(id);
 
-        if(null == post){
-            throw new BusinessException(CommonConstants.STATUS_CODE.STATUS_CODE_RECORD_NOT_FOUND,"Post not found");
+        if (null == post) {
+            throw new BusinessException(CommonConstants.STATUS.STATUS_CODE_RECORD_NOT_FOUND, "Post not found");
         }
-        postRepository.deletePostbyId(UUID.fromString(id),userId);
+        postRepository.deletePostbyId(UUID.fromString(id), userId);
     }
 
     public List<Post> getPostsByUserId(String userId) {
         return postRepository.findPostByUserId(userId);
     }
 
-    public Post updatePost(String postId, String caption, String userId) throws BusinessException {
+    public Post updatePost(String postId, String caption) throws BusinessException {
         Post post = this.getPostById(postId);
 
-        if(null == post){
-            throw new BusinessException(CommonConstants.STATUS_CODE.STATUS_CODE_RECORD_NOT_FOUND,"Post not found");
+        if (null == post) {
+            throw new BusinessException(CommonConstants.STATUS.STATUS_CODE_RECORD_NOT_FOUND, "Post not found");
         }
 
         post.setCaption(caption);
@@ -69,7 +69,7 @@ public class PostService {
 
     public Post getPostById(String id) {
         Optional<Post> postOptional = postRepository.findById(UUID.fromString(id));
-        if(postOptional!=null && postOptional.isPresent()) {
+        if (postOptional.isPresent()) {
             return postOptional.get();
         }
         return null;

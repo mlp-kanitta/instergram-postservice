@@ -1,9 +1,4 @@
 package com.kanittalab.instergram.postservice.model;
-import java.io.Serializable;
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +7,10 @@ import org.springframework.data.cassandra.core.mapping.CassandraType.Name;
 import org.springframework.data.cassandra.core.mapping.Column;
 import org.springframework.data.cassandra.core.mapping.PrimaryKey;
 import org.springframework.data.cassandra.core.mapping.Table;
+
+import java.io.Serializable;
+import java.time.Instant;
+import java.util.UUID;
 
 @Table("post")
 @RequiredArgsConstructor
