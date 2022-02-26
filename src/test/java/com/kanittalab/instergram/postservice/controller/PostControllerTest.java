@@ -2,6 +2,7 @@ package com.kanittalab.instergram.postservice.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kanittalab.instergram.postservice.constant.CommonConstants;
+import com.kanittalab.instergram.postservice.exception.BusinessException;
 import com.kanittalab.instergram.postservice.model.Post;
 import com.kanittalab.instergram.postservice.model.request.PostRequest;
 import com.kanittalab.instergram.postservice.service.PostService;
@@ -39,7 +40,7 @@ class PostControllerTest {
     @Autowired
     private MockMvc mvc;
 
-    @Autowired
+    @MockBean
     private PostService postService;
 
     @Autowired
@@ -141,12 +142,12 @@ class PostControllerTest {
     }
 
     @Test
-    void patch_posts_record_not_found() throws Exception {
+    void patch_posts_record_not_found_4000() throws Exception {
 
         String userId = "userTest";
         String postId = "a2ed972d-75b0-45af-8ea0-d1e387c7b15b";
 
-        //when(postService.getPostsByUserId("userTest")).thenReturn(posts);
+        when(postService.updatePost(anyString(),anyString(),anyString())).thenThrow(new BusinessException(CommonConstants.STATUS_CODE.STATUS_CODE_RECORD_NOT_FOUND,"Post not found"));
 
         mvc.perform(patch("/posts/"+postId)
                 .header("userid", "userTest")
@@ -156,17 +157,57 @@ class PostControllerTest {
     }
 
     @Test
-    void patch_posts_success_200() throws Exception {
+    void patch_posts_success_201() throws Exception {
 
         String userId = "userTest";
         String postId = "a2ed972d-75b0-45af-8ea0-d1e387c7b14b";
 
-        //when(postService.getPostsByUserId("userTest")).thenReturn(posts);
+        Post post1 = new Post();
+        post1.setCaption("\"test caption\"");
+        post1.setUserId("userTest");
+        post1.setUid(UUID.fromString(postId));
+
+        when(postService.getPostById(postId)).thenReturn(post1);
 
         mvc.perform(patch("/posts/"+postId)
                 .header("userid", "userTest")
         .param("caption","updated caption"))
                 .andExpect(status().isCreated())
+                .andExpect(jsonPath("code").value(CommonConstants.STATUS_CODE.STATUS_CODE_SUCCESS))
+                .andExpect(jsonPath("data").isEmpty());
+    }
+
+    @Test
+    void delete_posts_record_not_found_4000() throws Exception {
+
+        String userId = "userTest";
+        String postId = "7eb24561-962c-4bda-bf95-27c21f6465c5";
+
+        when(postService.getPostById(postId)).thenReturn(null);
+
+        mvc.perform(delete("/posts/"+postId)
+                .header("userid", "userTest"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("code").value(CommonConstants.STATUS_CODE.STATUS_CODE_SUCCESS))
+                .andExpect(jsonPath("data").isEmpty());
+    }
+
+    @Test
+    void delete_posts_success_200() throws Exception {
+
+        String userId = "userTest";
+        String postId = "7eb24561-962c-4bda-bf95-27c21f6465c5";
+
+        Post post1 = new Post();
+        post1.setCaption("\"test caption\"");
+        post1.setUserId("userTest");
+        post1.setUid(UUID.fromString(postId));
+
+        when(postService.getPostById(postId)).thenReturn(post1);
+
+        mvc.perform(delete("/posts/"+postId)
+                .header("userid", "userTest"))
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("code").value(CommonConstants.STATUS_CODE.STATUS_CODE_SUCCESS))
                 .andExpect(jsonPath("data").isEmpty());
     }

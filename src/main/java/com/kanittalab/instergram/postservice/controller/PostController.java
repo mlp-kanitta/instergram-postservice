@@ -81,7 +81,7 @@ public class PostController {
      */
     @DeleteMapping("/posts/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseEntity<CommonResponse> deletePost(@RequestHeader("userid") String userId, @PathVariable("id") String id) {
+    public ResponseEntity<CommonResponse> deletePost(@RequestHeader("userid") String userId, @PathVariable("id") String id) throws BusinessException {
         log.info("Received request to delete a post id {} posted by userId {}", id, userId);
         postService.deletePost(id, userId);
         return ResponseEntity.ok()

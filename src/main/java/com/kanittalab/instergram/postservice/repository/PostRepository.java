@@ -14,8 +14,8 @@ public interface PostRepository extends CassandraRepository<Post, String> {
     @Query("select * from post where user_id = ?0 LIMIT 20 ALLOW FILTERING")
     List<Post> findPostByUserId(String userId);
 
-    @Query("delete from post where uid=?0 AND user_id = ?1")
-    int deletePostbyId(String id,String userId);
+    @Query("delete from post where uid=?0")
+    void deletePostbyId(UUID id,String userId);
 
     @Query("select * from post where uid=?0")
     Optional<Post> findById(UUID id);

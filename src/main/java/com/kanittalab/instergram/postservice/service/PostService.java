@@ -41,8 +41,13 @@ public class PostService {
         return postRepository.insert(post);
     }
 
-    public void deletePost(String id, String userId) {
-        postRepository.deletePostbyId(id,userId);
+    public void deletePost(String id, String userId) throws BusinessException {
+        Post post = this.getPostById(id);
+
+        if(null == post){
+            throw new BusinessException(CommonConstants.STATUS_CODE.STATUS_CODE_RECORD_NOT_FOUND,"Post not found");
+        }
+        postRepository.deletePostbyId(UUID.fromString(id),userId);
     }
 
     public List<Post> getPostsByUserId(String userId) {
@@ -50,7 +55,7 @@ public class PostService {
     }
 
     public Post updatePost(String postId, String caption, String userId) throws BusinessException {
-        Post post = getPostById(postId);
+        Post post = this.getPostById(postId);
 
         if(null == post){
             throw new BusinessException(CommonConstants.STATUS_CODE.STATUS_CODE_RECORD_NOT_FOUND,"Post not found");
