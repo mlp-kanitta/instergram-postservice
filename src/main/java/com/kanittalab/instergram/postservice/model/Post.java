@@ -21,9 +21,8 @@ public class Post implements Serializable {
     @CassandraType(type = Name.UUID)
     private UUID uid = UUID.randomUUID();
 
-    @CassandraType(type = Name.UUID)
     @Column("user_id")
-    private UUID userId;
+    private String userId;
 
     private String caption;
 
