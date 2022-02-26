@@ -51,7 +51,7 @@ public class PostController {
     /*
         POST /posts - Create new post
      */
-    @RequestMapping(path = "/posts", method = RequestMethod.POST, consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+    @RequestMapping(path = "/v1/posts", method = RequestMethod.POST, consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
     public ResponseEntity<CommonResponse> createPost(@RequestHeader("userid") String userId,
                                          @RequestPart  @NonNull MultipartFile imageFile,
                                        @RequestParam @Size(max = 250) String caption) throws BusinessException, IOException {
@@ -79,7 +79,7 @@ public class PostController {
         DELETE /posts/{id} - Delete post by ID
         TODO : To allow only authorized user to called this endpoint
      */
-    @DeleteMapping("/posts/{id}")
+    @DeleteMapping("/v1/posts/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<CommonResponse> deletePost(@RequestHeader("userid") String userId, @PathVariable("id") String id) throws BusinessException {
         log.info("Received request to delete a post id {} posted by userId {}", id, userId);
@@ -92,7 +92,7 @@ public class PostController {
     /*
         GET /posts - List user posts
      */
-    @GetMapping("/posts")
+    @GetMapping("/v1/posts")
     public ResponseEntity<CommonResponse> findUserPosts(@RequestHeader("userid") String userId) {
         log.info("Received request to list a post for user {}", userId);
 
@@ -107,7 +107,7 @@ public class PostController {
     /*
         PATCH  /posts/{id} - Update post by ID
      */
-    @PatchMapping("/posts/{id}")
+    @PatchMapping("/v1/posts/{id}")
     public ResponseEntity<CommonResponse> updatePost(@RequestHeader("userid") String userId,
                                         @PathVariable("id") @NotNull String postId,
                                                      @RequestParam @Size(max = 250) String caption) throws IOException, BusinessException {

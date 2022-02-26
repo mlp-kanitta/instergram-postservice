@@ -58,7 +58,7 @@ class PostControllerTest {
                 "test".getBytes()
         );
 
-        mvc.perform(multipart("/posts")
+        mvc.perform(multipart("/v1/posts")
                 .file(imageFile)
                 .param("caption",caption)
                 .header("userid", "userTest"))
@@ -71,7 +71,7 @@ class PostControllerTest {
         String caption = "test caption";
 
 
-        mvc.perform(multipart("/posts")
+        mvc.perform(multipart("/v1/posts")
                 .param("caption",caption)
                 .header("userid", "userTest"))
                 .andExpect(status().isBadRequest());
@@ -89,7 +89,7 @@ class PostControllerTest {
                 "test".getBytes()
         );
 
-        mvc.perform(multipart("/posts")
+        mvc.perform(multipart("/v1/posts")
                 .file(imageFile)
                 .param("caption",caption)
                 .header("userid", "userTest"))
@@ -111,7 +111,7 @@ class PostControllerTest {
 
         when(postService.createPost(any(),anyString())).thenReturn(new Post());
 
-        mvc.perform(multipart("/posts")
+        mvc.perform(multipart("/v1/posts")
                 .file(imageFile)
                 .param("caption",caption)
                 .header("userid", "userTest"))
@@ -134,7 +134,7 @@ class PostControllerTest {
 
         when(postService.getPostsByUserId("userTest")).thenReturn(posts);
 
-        mvc.perform(get("/posts")
+        mvc.perform(get("/v1/posts")
                 .header("userid", "userTest"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("code").value(CommonConstants.STATUS_CODE.STATUS_CODE_SUCCESS))
@@ -149,7 +149,7 @@ class PostControllerTest {
 
         when(postService.updatePost(anyString(),anyString(),anyString())).thenThrow(new BusinessException(CommonConstants.STATUS_CODE.STATUS_CODE_RECORD_NOT_FOUND,"Post not found"));
 
-        mvc.perform(patch("/posts/"+postId)
+        mvc.perform(patch("/v1/posts/"+postId)
                 .header("userid", "userTest")
                 .param("caption","updated caption"))
                 .andExpect(status().isBadRequest())
@@ -169,7 +169,7 @@ class PostControllerTest {
 
         when(postService.getPostById(postId)).thenReturn(post1);
 
-        mvc.perform(patch("/posts/"+postId)
+        mvc.perform(patch("/v1/posts/"+postId)
                 .header("userid", "userTest")
         .param("caption","updated caption"))
                 .andExpect(status().isCreated())
@@ -185,7 +185,7 @@ class PostControllerTest {
 
         when(postService.getPostById(postId)).thenReturn(null);
 
-        mvc.perform(delete("/posts/"+postId)
+        mvc.perform(delete("/v1/posts/"+postId)
                 .header("userid", "userTest"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("code").value(CommonConstants.STATUS_CODE.STATUS_CODE_SUCCESS))
@@ -205,7 +205,7 @@ class PostControllerTest {
 
         when(postService.getPostById(postId)).thenReturn(post1);
 
-        mvc.perform(delete("/posts/"+postId)
+        mvc.perform(delete("/v1/posts/"+postId)
                 .header("userid", "userTest"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("code").value(CommonConstants.STATUS_CODE.STATUS_CODE_SUCCESS))
